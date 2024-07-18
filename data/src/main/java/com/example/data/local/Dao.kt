@@ -13,6 +13,11 @@ interface Dao{
     @Query("select * from Products")
     fun getProducts(): Flow<List<ProductsItem>>
 
+    @Query("select * from Products where LTRIM(RTRIM(title)) LIKE '%' || :data || '%' ")
+    fun searchByName(data:String): Flow<List<ProductsItem>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
      fun insertProducts(productsItem: List<ProductsItem?>?)
+
+
 }

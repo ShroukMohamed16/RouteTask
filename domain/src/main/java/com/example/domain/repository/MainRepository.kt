@@ -9,4 +9,5 @@ interface MainRepository {
     suspend fun getProducts():Response<ProductsResponse>
     fun getProductsFromDatabase(): Flow<List<ProductsItem>>
     fun insertProducts(productsItem: List<ProductsItem?>?)
+    fun getProductsByName(name:String): Flow<List<ProductsItem>>
 }

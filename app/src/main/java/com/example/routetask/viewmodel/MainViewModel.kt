@@ -70,6 +70,12 @@ class MainViewModel@Inject constructor(val mainUseCasee: MainUseCasee):ViewModel
            return mainUseCasee.getProductsFromDatabase()
 
     }
+    fun getProductsByName(name:String): Flow<List<ProductsItem>> {
+
+        return mainUseCasee.getProductsByName(name)
+
+    }
+
 
     fun insertProducts(productsItem: List<ProductsItem?>?){
         viewModelScope.launch(Dispatchers.IO){

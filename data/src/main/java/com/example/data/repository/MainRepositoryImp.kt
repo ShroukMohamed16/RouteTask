@@ -24,4 +24,8 @@ class MainRepositoryImp @Inject constructor(private val apiService: ApiService,
     override fun insertProducts(productsItem: List<ProductsItem?>?) {
         dao.insertProducts(productsItem)
     }
+
+    override fun getProductsByName(name: String): Flow<List<ProductsItem>> {
+       return dao.searchByName(name)
+    }
 }

@@ -84,6 +84,10 @@ dependencies {
     implementation "androidx.room:room-ktx:$room_version"
     implementation "androidx.room:room-common:$room_version"
 
+    // InstantTaskExecutorRule (Unit Testing)
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
+    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
+
     implementation project(path: ':data')
     implementation project(path: ':domain')
 

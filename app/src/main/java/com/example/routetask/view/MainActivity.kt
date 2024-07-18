@@ -3,6 +3,8 @@ package com.example.routetask.view
 import android.content.Context
 import android.net.ConnectivityManager
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -37,6 +39,40 @@ class MainActivity : AppCompatActivity() {
 
 
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.searchbar.addTextChangeListener(object : TextWatcher
+        {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+                Log.d("TAG", "beforeTextChanged: ")
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if(s?.length == 0){
+                    getProductsFromDataBase()
+
+                }else {
+                    lifecycleScope.launch {
+                        mainViewModel.getProductsByName(s.toString()).collect {
+                            mainAdapter.submitList(it)
+
+                        }
+                    }
+
+                }
+
+            }
+            override fun afterTextChanged(s: Editable?) {
+                Log.d("TAG", "afterTextChanged: ")
+
+
+            }
+
+        })
     }
     fun getProductsFromApi(){
         lifecycleScope.launch {

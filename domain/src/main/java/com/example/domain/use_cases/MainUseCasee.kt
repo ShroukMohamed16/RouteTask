@@ -8,4 +8,5 @@ class MainUseCasee @Inject constructor(private val mainRepository: MainRepositor
     suspend  fun getProducts() = mainRepository.getProducts()
     fun getProductsFromDatabase() = mainRepository.getProductsFromDatabase()
     fun insertProducts(productsItem: List<ProductsItem?>?) = mainRepository.insertProducts(productsItem)
+    fun getProductsByName(name:String) = mainRepository.getProductsByName(name)
 }
