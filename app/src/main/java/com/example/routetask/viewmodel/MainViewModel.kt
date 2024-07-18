@@ -3,11 +3,14 @@ package com.example.routetask.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.domain.model.ProductsItem
 import com.example.domain.model.ProductsResponse
 import com.example.domain.use_cases.MainUseCasee
 import com.example.routetask.Resources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -36,7 +39,7 @@ class MainViewModel@Inject constructor(val mainUseCasee: MainUseCasee):ViewModel
         }
         try {
             viewModelScope.launch(errorHandlerException) {
-                val result = mainUseCasee.invoke()
+                val result = mainUseCasee.getProducts()
                 if (result.isSuccessful) {
                     _products.emit(Resources.Success(result.body()))
                 } else {
@@ -59,6 +62,18 @@ class MainViewModel@Inject constructor(val mainUseCasee: MainUseCasee):ViewModel
                 _products.emit(Resources.Error("حدثت مشكلة رجاء حاول مرة أخري "))
             }
 
+        }
+    }
+
+    fun getProductsFromDatabase(): Flow<List<ProductsItem>> {
+
+           return mainUseCasee.getProductsFromDatabase()
+
+    }
+
+    fun insertProducts(productsItem: List<ProductsItem?>?){
+        viewModelScope.launch(Dispatchers.IO){
+            mainUseCasee.insertProducts(productsItem)
         }
     }
 }

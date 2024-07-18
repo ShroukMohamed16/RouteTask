@@ -1,5 +1,6 @@
 package com.example.routetask.view
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -20,15 +21,16 @@ class MainAdapter :ListAdapter<ProductsItem, ProductViewHolder>(ProductDiffUtil(
     }
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
+        Log.d("TAG", "onBindViewHolder: $position")
         val currentObj = getItem(position)
-        binding.product = currentObj
+        holder.bind(currentObj)
     }
 
 }
 
 class ProductDiffUtil:DiffUtil.ItemCallback<ProductsItem>(){
     override fun areItemsTheSame(oldItem: ProductsItem, newItem: ProductsItem): Boolean {
-        return oldItem === newItem
+        return oldItem.id == newItem.id
 
     }
 
@@ -38,4 +40,9 @@ class ProductDiffUtil:DiffUtil.ItemCallback<ProductsItem>(){
 
 }
 
-class ProductViewHolder(productItemBinding: ProductItemBinding):RecyclerView.ViewHolder(productItemBinding.root)
+class ProductViewHolder(private val binding: ProductItemBinding):RecyclerView.ViewHolder(binding.root){
+    fun bind(product: ProductsItem) {
+        binding.product = product
+        binding.executePendingBindings()  // Ensure data binding happens immediately
+    }
+}

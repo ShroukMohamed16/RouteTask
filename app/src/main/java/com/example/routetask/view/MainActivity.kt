@@ -1,5 +1,7 @@
 package com.example.routetask.view
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -14,7 +16,6 @@ import com.example.routetask.databinding.ActivityMainBinding
 import com.example.routetask.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.*
 
 
 @AndroidEntryPoint
@@ -29,12 +30,23 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this , R.layout.activity_main)
         mainAdapter = MainAdapter()
         binding.recyclerView.adapter = mainAdapter
+        if(isNetworkAvailable())
+            getProductsFromApi()
+        else
+            getProductsFromDataBase()
 
+
+
+    }
+    fun getProductsFromApi(){
         lifecycleScope.launch {
             mainViewModel.getProducts()
             mainViewModel.products.collect{
                 when(it) {
-                    is Resources.Success -> mainAdapter.submitList(it.data?.products)
+                    is Resources.Success -> {
+                        mainAdapter.submitList(it.data?.products)
+                        mainViewModel.insertProducts(it.data?.products?: listOf<ProductsItem>())
+                    }
                     is Resources.Error -> {
                         Toast.makeText(applicationContext, it.message, Toast.LENGTH_LONG).show()
                         Log.d("TAG", "onCreate: ${it.message}")
@@ -42,10 +54,25 @@ class MainActivity : AppCompatActivity() {
                     else->{
                         Log.d("TAG", "onCreate: Error")}
                 }
+
+
             }
         }
+    }
 
+    fun getProductsFromDataBase(){
+        lifecycleScope.launch {
+         mainViewModel.getProductsFromDatabase().collect{
+             mainAdapter.submitList(it)
+         }
+        }
 
+    }
 
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager =
+            this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 }
